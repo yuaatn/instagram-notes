@@ -1,4 +1,4 @@
-package com.yuaatn.instagram_notes.data
+package com.yuaatn.instagram_notes.data.local
 
 import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow

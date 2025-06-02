@@ -2,7 +2,7 @@ package com.yuaatn.instagram_notes.ui.screens.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yuaatn.instagram_notes.data.NotesRepository
+import com.yuaatn.instagram_notes.data.local.NotesRepository
 import com.yuaatn.instagram_notes.ui.screens.add.NoteEntity
 import com.yuaatn.instagram_notes.ui.screens.add.toNote
 import com.yuaatn.instagram_notes.ui.screens.add.toUiState

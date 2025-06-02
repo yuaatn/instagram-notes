@@ -1,9 +1,9 @@
 package com.yuaatn.instagram_notes.di
 
 import android.content.Context
-import com.yuaatn.instagram_notes.data.FileNotebook
-import com.yuaatn.instagram_notes.data.FileNotebookProxy
-import com.yuaatn.instagram_notes.data.NotesRepository
+import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.local.FileNotebookProxy
+import com.yuaatn.instagram_notes.data.local.NotesRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
