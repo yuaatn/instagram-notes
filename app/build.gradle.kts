@@ -44,6 +44,12 @@ android {
 
 dependencies {
 
+    // retrofit2 для работы с бекендом
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+
     // библиотека Coil + поддержка загрузки через OkHttp для картинки профиля
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
