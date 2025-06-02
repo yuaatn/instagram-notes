@@ -46,8 +46,13 @@ fun InstagramNotesApp(
                 composable(route = Screen.Setting.route) {
                     SettingScreen()
                 }
+
                 composable(route = Screen.Profile.route) {
-                    ProfileScreen()
+                    ProfileScreen(
+                        avatarUrl = "https://sun9-57.userapi.com/impg/cPbQdKwQ99V3o1aWyoyGV9xJErOjEEFgND4_wQ/2rfVkq02OLI.jpg?size=1620x2160&quality=95&sign=91debc45437a2c835e585ff5c4b23b87&type=album",
+                        username = "yuaatn",
+                        bio = "Android developer | Tech enthusiast | Coffee lover ☕"
+                    )
                 }
 
                 composable(

@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yuaatn.instagram_notes.R
-import com.yuaatn.instagram_notes.ui.shared.AddNoteComponent
+import com.yuaatn.instagram_notes.ui.screens.add.components.EntryFormComponent
 
 @Composable
 fun NoteEditScreen(
@@ -65,14 +65,16 @@ fun NoteEditScreen(
 
     Column(
         modifier = modifier
-            .imePadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 12.dp),
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            ),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        AddNoteComponent(
-            noteEntity = uiState.currentNote,
-            onValueChange = { viewModel.processAction(NoteEditAction.ModifyNoteEntity(it)) },
+        EntryFormComponent(
+            entry = uiState.currentNote,
+            onEntryChange = { viewModel.processAction(NoteEditAction.ModifyNoteEntity(it)) },
             modifier = Modifier.fillMaxWidth()
         )
 

@@ -3,6 +3,7 @@ package com.yuaatn.instagram_notes.ui.screens.add
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -13,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yuaatn.instagram_notes.R
-import com.yuaatn.instagram_notes.ui.shared.AddNoteComponent
+import com.yuaatn.instagram_notes.ui.screens.add.components.EntryFormComponent
 
 @Composable
 fun NoteCreationScreen(
@@ -23,12 +24,16 @@ fun NoteCreationScreen(
 ) {
     Column(
         modifier = modifier
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .verticalScroll(rememberScrollState())
+            .padding(
+                horizontal = 12.dp,
+                vertical = 8.dp
+            ),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        AddNoteComponent(
-            noteEntity = viewModel.uiState.currentNote,
-            onValueChange = { viewModel.processAction(NoteAction.ModifyNote(it)) },
+        EntryFormComponent(
+            entry = viewModel.uiState.currentNote,
+            onEntryChange = { viewModel.processAction(NoteAction.ModifyNote(it)) },
             modifier = modifier
         )
 

@@ -20,8 +20,8 @@ class EditNoteViewModel @Inject constructor(
     private val jsonRepository: NotesRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(NoteEditUiState())
-    val uiState: StateFlow<NoteEditUiState> = _uiState
+    private val _uiState = MutableStateFlow(NoteEditState())
+    val uiState: StateFlow<NoteEditState> = _uiState
 
     fun processAction(action: NoteEditAction) {
         when (action) {

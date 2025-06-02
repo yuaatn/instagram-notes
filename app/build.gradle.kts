@@ -44,6 +44,10 @@ android {
 
 dependencies {
 
+    // библиотека Coil + поддержка загрузки через OkHttp для картинки профиля
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     // logback логгер для FileNotebook
     implementation("com.github.tony19:logback-android:3.0.0")
     implementation ("org.slf4j:slf4j-api:2.0.17")
@@ -52,8 +56,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.4")
 
     // зависимости Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.46")
+    kapt("com.google.dagger:hilt-compiler:2.46")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     implementation(libs.androidx.core.ktx)

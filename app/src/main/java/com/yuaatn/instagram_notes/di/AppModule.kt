@@ -13,22 +13,12 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
-
-//    @Provides
-//    @Singleton
-//    fun provideRemoteRepository(): RemoteRepository = RemoteRepositoryImpl()
-
+class AppModule {
     @Provides
     @Singleton
-    fun provideContext(@ApplicationContext context: Context): Context = context
-
-    @Provides
-    @Singleton
-    fun provideLocalRepository(
-        context: Context,
+    fun provideNotesRepository(
+        @ApplicationContext context: Context
     ): NotesRepository = FileNotebookProxy(
         fileNotebook = FileNotebook(context)
     )
-
 }

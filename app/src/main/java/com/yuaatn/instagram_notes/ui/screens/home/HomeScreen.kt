@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yuaatn.instagram_notes.R
 import com.yuaatn.instagram_notes.model.Note
-import com.yuaatn.instagram_notes.ui.shared.InstaStyleNoteCard
-import com.yuaatn.instagram_notes.ui.shared.InstagramFloatingButton
-import com.yuaatn.instagram_notes.ui.shared.LoadingCircle
+import com.yuaatn.instagram_notes.ui.screens.home.components.InstaStyleNoteCard
+import com.yuaatn.instagram_notes.ui.screens.home.components.InstagramFloatingButton
+import com.yuaatn.instagram_notes.ui.screens.home.components.LoadingCircle
 
 @Composable
 fun HomeScreen(
