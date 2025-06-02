@@ -41,6 +41,10 @@ android {
 
 dependencies {
 
+    // нижняя боттом бар навигация
+    implementation("androidx.navigation:navigation-compose:2.8.4")
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
