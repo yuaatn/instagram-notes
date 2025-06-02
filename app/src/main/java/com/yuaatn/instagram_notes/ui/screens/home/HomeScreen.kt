@@ -91,7 +91,6 @@ private fun NotesGrid(
                 InstaStyleNoteCard(
                     note = note,
                     onDelete = { onDeleteSwipe(note.uid) },
-                    onEdit = { onEdit(note.uid) },
                     onClick = { onEdit(note.uid) },
                     modifier = Modifier
                         .aspectRatio(1f)

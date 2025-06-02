@@ -46,20 +46,15 @@ import com.yuaatn.instagram_notes.model.Note
 fun InstaStyleNoteCard(
     note: Note,
     onDelete: () -> Unit,
-    onEdit: () -> Unit,
     onClick: () -> Unit,
-    dismissState: SwipeToDismissBoxState = rememberSwipeToDismissBoxState(),
     modifier: Modifier = Modifier,
 ) {
+    val dismissState: SwipeToDismissBoxState = rememberSwipeToDismissBoxState()
+
     LaunchedEffect(dismissState.currentValue) {
         when (dismissState.currentValue) {
-            SwipeToDismissBoxValue.StartToEnd -> {
-                onDelete()
-                dismissState.reset()
-            }
-
             SwipeToDismissBoxValue.EndToStart -> {
-                onEdit()
+                onDelete()
                 dismissState.reset()
             }
 
@@ -68,39 +63,24 @@ fun InstaStyleNoteCard(
     }
 
     SwipeToDismissBox(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(12.dp)),
+        modifier = modifier,
         state = dismissState,
         backgroundContent = {
             Row(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AnimatedVisibility(
-                    visible = dismissState.targetValue == SwipeToDismissBoxValue.StartToEnd,
-                    enter = fadeIn()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
                 Spacer(modifier = Modifier.weight(1f))
+
                 AnimatedVisibility(
                     visible = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart,
                     enter = fadeIn()
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(28.dp)
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
+                        tint = Color.Red
                     )
                 }
             }
