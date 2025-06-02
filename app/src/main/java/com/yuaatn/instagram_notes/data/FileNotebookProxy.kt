@@ -1,14 +1,14 @@
 package com.yuaatn.instagram_notes.data
 
-import android.content.Context
 import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
 import org.slf4j.LoggerFactory
 
-class FileNotebookProxy(private val context: Context) : NotesRepository {
+class FileNotebookProxy(
+    private val fileNotebook: FileNotebook
+) : NotesRepository {
     private val logger = LoggerFactory.getLogger(FileNotebookProxy::class.java)
-    private val fileNotebook = FileNotebook(context)
 
     override val notes: Flow<List<Note>> get() = fileNotebook.notes
 

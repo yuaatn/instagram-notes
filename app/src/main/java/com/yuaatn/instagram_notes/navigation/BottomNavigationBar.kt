@@ -1,4 +1,4 @@
-package com.yuaatn.instagram_notes.ui.navigation
+package com.yuaatn.instagram_notes.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 
 @Composable
@@ -29,18 +28,19 @@ fun BottomNavigationBar(
         NavigationItem(
             title = "Home",
             icon = Icons.Default.Home,
-            route = Screen.Home.rout
+            route = Screen.Home.route
         ),
         NavigationItem(
             title = "Profile",
             icon = Icons.Default.Person,
-            route = Screen.Profile.rout
+            route = Screen.Profile.route
         ),
         NavigationItem(
             title = "Setting",
             icon = Icons.Default.Settings,
-            route = Screen.Setting.rout
+            route = Screen.Setting.route
         )
+
     )
 
     NavigationBar(
@@ -68,14 +68,7 @@ fun BottomNavigationBar(
                     selectedIconColor = MaterialTheme.colorScheme.surface,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
-
             )
         }
     }
 }
-
-data class NavigationItem(
-    val title: String,
-    val icon: ImageVector,
-    val route: String
-)

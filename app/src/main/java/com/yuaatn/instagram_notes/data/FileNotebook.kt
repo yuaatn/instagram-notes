@@ -5,6 +5,7 @@ import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import java.io.File
 
@@ -25,11 +26,8 @@ class FileNotebook(context: Context) : NotesRepository {
         }
 
     override fun updateNote(note: Note) {
-        val updatedNotes = _notes.value.toMutableList()
-        val index = updatedNotes.indexOfFirst { it.uid == note.uid }
-        if (index != -1) {
-            updatedNotes[index] = note
-            _notes.value = updatedNotes
+        _notes.update { currentNotes ->
+            currentNotes.map { if (it.uid == note.uid) note else it }
         }
     }
 
