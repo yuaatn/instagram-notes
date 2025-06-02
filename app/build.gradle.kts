@@ -41,6 +41,10 @@ android {
 
 dependencies {
 
+    // logback логгер для FileNotebook
+    implementation("com.github.tony19:logback-android:3.0.0")
+    implementation ("org.slf4j:slf4j-api:2.0.17")
+
     // нижняя боттом бар навигация
     implementation("androidx.navigation:navigation-compose:2.8.4")
 
