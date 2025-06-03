@@ -27,13 +27,8 @@ fun BottomNavigationBar(
     val navigationItems = listOf(
         NavigationItem(
             title = "Home",
-            icon = Icons.Default.Home,
-            route = Screen.Home.route
-        ),
-        NavigationItem(
-            title = "Profile",
             icon = Icons.Default.Person,
-            route = Screen.Profile.route
+            route = Screen.Home.route
         ),
         NavigationItem(
             title = "Setting",

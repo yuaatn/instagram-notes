@@ -14,7 +14,6 @@ import androidx.navigation.createGraph
 import androidx.navigation.navArgument
 import com.yuaatn.instagram_notes.navigation.BottomNavigationBar
 import com.yuaatn.instagram_notes.navigation.Screen
-import com.yuaatn.instagram_notes.ui.screens.ProfileScreen
 import com.yuaatn.instagram_notes.ui.screens.SettingScreen
 import com.yuaatn.instagram_notes.ui.screens.add.NoteCreationScreen
 import com.yuaatn.instagram_notes.ui.screens.edit.NoteEditScreen
@@ -47,14 +46,6 @@ fun InstagramNotesApp(
                     SettingScreen()
                 }
 
-                composable(route = Screen.Profile.route) {
-                    ProfileScreen(
-                        avatarUrl = "https://sun9-57.userapi.com/impg/cPbQdKwQ99V3o1aWyoyGV9xJErOjEEFgND4_wQ/2rfVkq02OLI.jpg?size=1620x2160&quality=95&sign=91debc45437a2c835e585ff5c4b23b87&type=album",
-                        username = "yuaatn",
-                        bio = "Android developer | Tech enthusiast | Coffee lover ☕"
-                    )
-                }
-
                 composable(
                     route = Screen.AddNote.route
                 ) {
@@ -79,11 +70,11 @@ fun InstagramNotesApp(
                     )
                 }
             }
+
         NavHost(
             navController = navController,
             graph = graph,
             modifier = Modifier.padding(innerPadding)
         )
-
     }
 }

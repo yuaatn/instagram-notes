@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import com.yuaatn.instagram_notes.model.Note
 import com.yuaatn.instagram_notes.ui.screens.home.components.InstaStyleNoteCard
 import com.yuaatn.instagram_notes.ui.screens.home.components.InstagramFloatingButton
 import com.yuaatn.instagram_notes.ui.screens.home.components.LoadingCircle
+import com.yuaatn.instagram_notes.ui.screens.home.components.ProfileHeader
 
 @Composable
 fun HomeScreen(
@@ -62,7 +62,6 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NotesGrid(
     notes: List<Note>,
@@ -70,32 +69,34 @@ private fun NotesGrid(
     onDeleteSwipe: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (notes.isEmpty()) {
-        Text(
-            text = stringResource(R.string.no_created_items),
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center,
-            modifier = modifier.fillMaxWidth()
-        )
-    } else {
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 95.dp),
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(notes, key = { it.uid }) { note ->
-                InstaStyleNoteCard(
-                    note = note,
-                    onDelete = { onDeleteSwipe(note.uid) },
-                    onClick = { onEdit(note.uid) },
-                    modifier = Modifier
-                        .aspectRatio(1f)
-                        .padding(4.dp)
-                )
+    ProfileHeader {
+        if (notes.isEmpty()) {
+            Text(
+                text = stringResource(R.string.no_created_items),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            )
+        } else {
+            LazyVerticalGrid(
+                modifier = Modifier.fillMaxWidth(),
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(notes, key = { it.uid }) { note ->
+                    InstaStyleNoteCard(
+                        note = note,
+                        onDelete = { onDeleteSwipe(note.uid) },
+                        onClick = { onEdit(note.uid) },
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .padding(4.dp)
+                    )
+                }
             }
         }
     }
