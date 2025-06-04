@@ -51,6 +51,9 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.retrofit)
 
+    // interceptor
+    implementation(libs.logging.interceptor)
+
     // библиотека Coil + поддержка загрузки через OkHttp для картинки профиля
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
