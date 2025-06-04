@@ -10,6 +10,10 @@ data class Note(
     val content: String,
     val color: Int = AndroidColor.WHITE,
     val importance: Importance = Importance.NORMAL,
+    val deadline: Long? = null,
+    val createdAt: Long? = null,
+    val changedAt: Long? = null,
+    val deviceId: String = "myDeviceId_123"
 ) {
     companion object {
         fun parse(json: JSONObject): Note? {

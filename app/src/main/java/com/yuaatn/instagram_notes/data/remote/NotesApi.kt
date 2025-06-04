@@ -2,7 +2,8 @@ package com.yuaatn.instagram_notes.data.remote
 
 import com.yuaatn.instagram_notes.data.remote.model.FetchNoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.FetchNotesResponse
-import com.yuaatn.instagram_notes.data.remote.model.NoteRequest
+import com.yuaatn.instagram_notes.data.remote.model.ElementNoteRequest
+import com.yuaatn.instagram_notes.data.remote.model.NoteDto
 import com.yuaatn.instagram_notes.data.remote.model.NoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.PatchNotesRequest
 import retrofit2.http.Body
@@ -14,7 +15,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface BackendApi {
+interface NotesApi {
 
     @GET("list")
     suspend fun fetchNotes(
@@ -22,7 +23,7 @@ interface BackendApi {
     ): FetchNotesResponse
 
     @GET("list/{id}")
-    suspend fun fetchNoteById(
+    suspend fun fetchNoteByUid(
         @Path("id") noteUid: String,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
     ): FetchNoteResponse
@@ -30,7 +31,7 @@ interface BackendApi {
     @POST("list")
     suspend fun createNote(
         @Header("X-Last-Known-Revision") revision: Int,
-        @Body request: NoteRequest,
+        @Body request: NoteDto,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
     ): NoteResponse
 
@@ -38,12 +39,12 @@ interface BackendApi {
     suspend fun updateNote(
         @Header("X-Last-Known-Revision") revision: Int,
         @Path("id") noteUid: String,
-        @Body request: NoteRequest,
+        @Body request: NoteDto,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
     ): NoteResponse
 
     @DELETE("list/{id}")
-    suspend fun removeNoteById(
+    suspend fun removeNoteByUid(
         @Header("X-Last-Known-Revision") revision: Int,
         @Path("id") noteUid: String,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
