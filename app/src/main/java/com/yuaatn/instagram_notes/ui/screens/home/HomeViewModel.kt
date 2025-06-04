@@ -2,7 +2,7 @@ package com.yuaatn.instagram_notes.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yuaatn.instagram_notes.data.local.NotesRepository
+import com.yuaatn.instagram_notes.data.local.FileNotebook
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: NotesRepository,
+    private val localRepository: FileNotebook,
 ) : ViewModel() {
 
-    val uiState = repository.notes
+    val uiState = localRepository.notes
         .map { HomeState.Success(it) as HomeState }
         .stateIn(
             scope = viewModelScope,
@@ -32,13 +32,13 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchNotes() {
         viewModelScope.launch {
-            repository.loadFromFile()
+            localRepository.loadFromFile()
         }
     }
 
     private fun removeNoteById(uid: String) {
         viewModelScope.launch {
-            repository.deleteNote(uid)
+            localRepository.deleteNote(uid)
         }
     }
 

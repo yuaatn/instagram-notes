@@ -6,39 +6,39 @@ import kotlinx.coroutines.flow.count
 import org.slf4j.LoggerFactory
 
 class FileNotebookProxy(
-    private val fileNotebook: FileNotebook
-) : NotesRepository {
+    private val fileNotebookImpl: FileNotebook
+) : FileNotebook {
     private val logger = LoggerFactory.getLogger(FileNotebookProxy::class.java)
 
-    override val notes: Flow<List<Note>> get() = fileNotebook.notes
+    override val notes: Flow<List<Note>> get() = fileNotebookImpl.notes
 
     override fun addNote(note: Note) {
-        fileNotebook.addNote(note)
+        fileNotebookImpl.addNote(note)
         logger.debug("Добавлена заметка: ${note.title}")
     }
 
     override fun getNoteByUid(uid: String): Flow<Note> {
         logger.debug("Получение заметки по UID: $uid")
-        return fileNotebook.getNoteByUid(uid)
+        return fileNotebookImpl.getNoteByUid(uid)
     }
 
     override fun updateNote(note: Note) {
-        fileNotebook.updateNote(note)
+        fileNotebookImpl.updateNote(note)
         logger.debug("Обновлена заметка: ${note.title} (UID: ${note.uid})")
     }
 
     override fun deleteNote(uid: String) {
-        fileNotebook.deleteNote(uid)
+        fileNotebookImpl.deleteNote(uid)
         logger.debug("Удаление заметки UID=$uid")
     }
 
     override suspend fun saveToFile() {
-        fileNotebook.saveToFile()
-        logger.debug("Сохранено ${fileNotebook.notes.count()} заметок в файл")
+        fileNotebookImpl.saveToFile()
+        logger.debug("Сохранено ${fileNotebookImpl.notes.count()} заметок в файл")
     }
 
     override suspend fun loadFromFile() {
-        fileNotebook.loadFromFile()
-        logger.debug("Загружено ${fileNotebook.notes.count()} заметок из файла")
+        fileNotebookImpl.loadFromFile()
+        logger.debug("Загружено ${fileNotebookImpl.notes.count()} заметок из файла")
     }
 }

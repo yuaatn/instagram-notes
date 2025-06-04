@@ -2,9 +2,9 @@ package com.yuaatn.instagram_notes.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.local.FileNotebookImpl
 import com.yuaatn.instagram_notes.data.local.FileNotebookProxy
-import com.yuaatn.instagram_notes.data.local.NotesRepository
+import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.remote.NotesApi
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepositoryImpl
@@ -85,11 +85,11 @@ class AppModule {
     @Provides
     @Singleton
     fun provideFileNotebook(@ApplicationContext context: Context): FileNotebook =
-        FileNotebook(context)
+        FileNotebookImpl(context)
 
     @Provides
     @Singleton
-    fun provideFileNotebook(fileNotebook: FileNotebook): NotesRepository =
-        FileNotebookProxy(fileNotebook) // гофовский прокси с логером
+    fun provideFileNotebook(fileNotebookImpl: FileNotebook): FileNotebook =
+        FileNotebookProxy(fileNotebookImpl) // гофовский прокси с логером
 
 }
