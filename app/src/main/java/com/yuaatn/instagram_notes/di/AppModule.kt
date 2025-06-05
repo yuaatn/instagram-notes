@@ -2,9 +2,9 @@ package com.yuaatn.instagram_notes.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.local.FileNotebookImpl
 import com.yuaatn.instagram_notes.data.local.FileNotebookProxy
-import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.remote.NotesApi
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepositoryImpl
@@ -39,20 +39,15 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.HEADERS
+            level = HttpLoggingInterceptor.Level.BODY
         })
         .addInterceptor { chain ->
-            val originalRequest = chain.request()
-            val requestBuilder = originalRequest.newBuilder()
+            val request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $AUTH_TOKEN")
                 .addHeader("Accept", "application/json")
                 .addHeader("Content-Type", "application/json")
-
-            originalRequest.header("X-Generate-Fails")?.let {
-                requestBuilder.header("X-Generate-Fails", it)
-            }
-
-            chain.proceed(requestBuilder.build())
+                .build()
+            chain.proceed(request)
         }
         .build()
 
@@ -60,7 +55,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(
         json: Json,
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
     ): Retrofit = Retrofit.Builder()
         .baseUrl(API_BASE_URL)
         .client(okHttpClient)
@@ -69,27 +64,21 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNotesApiService(retrofit: Retrofit): NotesApi =
-        retrofit.create(NotesApi::class.java)
+    fun provideNotesApi(retrofit: Retrofit): NotesApi = retrofit.create(NotesApi::class.java)
 
     @Provides
     @Singleton
-    fun provideRemoteRepository(api: NotesApi): RemoteRepository =
-        RemoteRepositoryImpl(api)
+    fun provideRemoteRepository(api: NotesApi): RemoteRepository = RemoteRepositoryImpl(api)
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-class AppModule {
+object LocalModule {
 
     @Provides
     @Singleton
-    fun provideFileNotebook(@ApplicationContext context: Context): FileNotebook =
-        FileNotebookImpl(context)
-
-    @Provides
-    @Singleton
-    fun provideFileNotebook(fileNotebookImpl: FileNotebook): FileNotebook =
-        FileNotebookProxy(fileNotebookImpl) // гофовский прокси с логером
-
+    fun provideFileNotebook(@ApplicationContext context: Context): FileNotebook {
+        val originalRepository = FileNotebookImpl(context)
+        return FileNotebookProxy(originalRepository)
+    }
 }

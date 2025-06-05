@@ -2,14 +2,19 @@ package com.yuaatn.instagram_notes.data.local
 
 import android.content.Context
 import com.yuaatn.instagram_notes.model.Note
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import java.io.File
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FileNotebookImpl(context: Context) : FileNotebook {
+class FileNotebookImpl @Inject constructor(
+    @ApplicationContext context: Context
+) : FileNotebook {
 
     private val file = File(context.filesDir, "notes.json")
     private val _notes = MutableStateFlow<List<Note>>(emptyList())

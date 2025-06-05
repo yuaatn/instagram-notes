@@ -3,7 +3,6 @@ package com.yuaatn.instagram_notes.ui.screens.edit
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +29,7 @@ fun NoteEditScreen(
     noteId: String?,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EditNoteViewModel = hiltViewModel()
+    viewModel: NoteEditViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val showDeleteDialog = remember { mutableStateOf(false) }

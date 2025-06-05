@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditNoteViewModel @Inject constructor(
+class NoteEditViewModel @Inject constructor(
     private val jsonRepository: FileNotebook
 ) : ViewModel() {
 
