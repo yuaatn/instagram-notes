@@ -13,4 +13,5 @@ interface FileNotebook {
 
     suspend fun saveToFile()
     suspend fun loadFromFile()
+    suspend fun updateNotes(remoteNotes: List<Note>)
 }

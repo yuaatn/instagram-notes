@@ -1,8 +1,8 @@
 package com.yuaatn.instagram_notes.data.remote
 
+import com.yuaatn.instagram_notes.data.remote.model.ElementNoteRequest
 import com.yuaatn.instagram_notes.data.remote.model.FetchNoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.FetchNotesResponse
-import com.yuaatn.instagram_notes.data.remote.model.NoteDto
 import com.yuaatn.instagram_notes.data.remote.model.NoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.PatchNotesRequest
 import retrofit2.http.Body
@@ -30,7 +30,7 @@ interface NotesApi {
     @POST("list")
     suspend fun createNote(
         @Header("X-Last-Known-Revision") revision: Int,
-        @Body request: NoteDto,
+        @Body request: ElementNoteRequest,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
     ): NoteResponse
 
@@ -38,7 +38,7 @@ interface NotesApi {
     suspend fun updateNote(
         @Header("X-Last-Known-Revision") revision: Int,
         @Path("id") noteUid: String,
-        @Body request: NoteDto,
+        @Body request: ElementNoteRequest,
         @Header("X-Generate-Fails") generateFailsThreshold: Int? = null,
     ): NoteResponse
 

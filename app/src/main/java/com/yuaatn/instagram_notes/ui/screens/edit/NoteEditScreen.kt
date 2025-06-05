@@ -10,6 +10,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +54,7 @@ fun NoteEditScreen(
             confirmButton = {
                 Button(
                     onClick = { viewModel.processAction(NoteEditAction.RemoveNote) },
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer),
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(text = stringResource(R.string.confirm))
@@ -90,7 +91,7 @@ fun NoteEditScreen(
 
         Button(
             onClick = { showDeleteDialog.value = true },
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
             modifier = modifier.fillMaxWidth()
         ) {
             Text(text = stringResource(R.string.delete))

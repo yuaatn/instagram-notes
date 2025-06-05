@@ -38,10 +38,6 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.processAction(HomeAction.InitializeHome)
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         when (val current = uiState) {
             is HomeState.Loading -> LoadingCircle()

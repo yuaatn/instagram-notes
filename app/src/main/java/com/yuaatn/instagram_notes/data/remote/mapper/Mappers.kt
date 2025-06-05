@@ -9,7 +9,11 @@ import java.util.Date
 fun Note.toDto(): NoteDto = NoteDto(
     id = this.uid,
     text = this.title,
-    importance = this.importance.name.lowercase(),
+    importance =  when (this.importance) {
+        Importance.LOW -> "low"
+        Importance.NORMAL -> "basic"
+        Importance.HIGH -> "important"
+    },
 
     deadline = this.deadline,
     isDone = false,

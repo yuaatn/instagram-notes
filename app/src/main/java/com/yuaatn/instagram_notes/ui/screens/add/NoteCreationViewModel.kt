@@ -6,13 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.remote.RemoteRepository
+import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class NoteCreationViewModel @Inject constructor(
-    private val jsonRepository: FileNotebook
+    private val repository: NotesSynchronizer
 ) : ViewModel() {
 
     var uiState by mutableStateOf(NoteCreationState())
@@ -39,8 +41,7 @@ class NoteCreationViewModel @Inject constructor(
     private fun commitNote() {
         viewModelScope.launch {
             if (checkNoteValidity(uiState.currentNote)) {
-                jsonRepository.addNote(uiState.currentNote.toNote())
-                jsonRepository.saveToFile()
+                repository.syncOnCreate(uiState.currentNote.toNote())
             }
         }
     }

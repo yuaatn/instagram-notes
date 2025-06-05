@@ -2,6 +2,7 @@ package com.yuaatn.instagram_notes.data.remote
 
 import com.yuaatn.instagram_notes.data.remote.mapper.toDomain
 import com.yuaatn.instagram_notes.data.remote.mapper.toDto
+import com.yuaatn.instagram_notes.data.remote.model.ElementNoteRequest
 import com.yuaatn.instagram_notes.data.remote.model.PatchNotesRequest
 import com.yuaatn.instagram_notes.data.remote.model.UidResponse
 import com.yuaatn.instagram_notes.data.remote.util.ResultWrapper
@@ -17,7 +18,7 @@ private const val INITIAL_RETRY_DELAY_MS = 1000L
 private const val MAX_RETRY_DELAY_MS = 10000L
 
 internal class RemoteRepositoryImpl @Inject constructor(
-    private val api: NotesApi
+    private val api: NotesApi,
 ) : RemoteRepository {
 
     private var currentRevision: Int = 0
@@ -44,7 +45,9 @@ internal class RemoteRepositoryImpl @Inject constructor(
         executeModificationWithRetry {
             api.createNote(
                 revision = currentRevision,
-                request = note.toDto()
+                request = ElementNoteRequest(
+                    element = note.toDto()
+                )
             ).let { response ->
                 currentRevision = response.revision
                 ResultWrapper.Success(UidResponse(response.element.id))
@@ -57,7 +60,9 @@ internal class RemoteRepositoryImpl @Inject constructor(
                 api.updateNote(
                     revision = currentRevision,
                     noteUid = note.uid,
-                    request = note.toDto()
+                    request = ElementNoteRequest(
+                        element = note.toDto()
+                    )
                 ).let { response ->
                     currentRevision = response.revision
                     ResultWrapper.Success(UidResponse(response.element.id))
@@ -112,7 +117,7 @@ internal class RemoteRepositoryImpl @Inject constructor(
     }
 
     private suspend fun <T> executeWithRetry(
-        block: suspend () -> ResultWrapper<T>
+        block: suspend () -> ResultWrapper<T>,
     ): ResultWrapper<T> {
         var attempt = 0
         var lastError: Throwable? = null
@@ -136,7 +141,7 @@ internal class RemoteRepositoryImpl @Inject constructor(
     }
 
     private suspend fun <T> executeModificationWithRetry(
-        block: suspend () -> ResultWrapper<T>
+        block: suspend () -> ResultWrapper<T>,
     ): ResultWrapper<T> {
         modificationQueue.add(block)
         if (!isProcessingQueue) {

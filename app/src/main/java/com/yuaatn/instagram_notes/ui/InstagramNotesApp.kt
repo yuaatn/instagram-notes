@@ -14,7 +14,7 @@ import androidx.navigation.createGraph
 import androidx.navigation.navArgument
 import com.yuaatn.instagram_notes.navigation.BottomNavigationBar
 import com.yuaatn.instagram_notes.navigation.Screen
-import com.yuaatn.instagram_notes.ui.screens.SettingScreen
+import com.yuaatn.instagram_notes.ui.screens.settings.SettingsScreen
 import com.yuaatn.instagram_notes.ui.screens.add.NoteCreationScreen
 import com.yuaatn.instagram_notes.ui.screens.edit.NoteEditScreen
 import com.yuaatn.instagram_notes.ui.screens.home.HomeScreen
@@ -43,7 +43,7 @@ fun InstagramNotesApp(
                 }
 
                 composable(route = Screen.Setting.route) {
-                    SettingScreen()
+                    SettingsScreen()
                 }
 
                 composable(

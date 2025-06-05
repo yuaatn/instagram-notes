@@ -3,6 +3,7 @@ package com.yuaatn.instagram_notes.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -12,11 +13,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val localRepository: FileNotebook,
+    private val repository: NotesSynchronizer
 ) : ViewModel() {
 
-    val uiState = localRepository.notes
-        .map { HomeState.Success(it) as HomeState }
+    val uiState = repository.notes
+        .map { HomeState.Success(it) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = NOT_SHUTDOWN_DELAY),
@@ -32,13 +33,13 @@ class HomeViewModel @Inject constructor(
 
     private fun fetchNotes() {
         viewModelScope.launch {
-            localRepository.loadFromFile()
+            repository.synchronize()
         }
     }
 
     private fun removeNoteById(uid: String) {
         viewModelScope.launch {
-            localRepository.deleteNote(uid)
+            repository.syncOnDelete(uid)
         }
     }
 

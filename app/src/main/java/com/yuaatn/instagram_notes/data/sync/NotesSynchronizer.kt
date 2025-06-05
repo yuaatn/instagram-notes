@@ -4,7 +4,11 @@ import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.util.ResultWrapper
 import com.yuaatn.instagram_notes.model.Note
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onStart
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +21,15 @@ class NotesSynchronizer @Inject constructor(
 
     private val logger = LoggerFactory.getLogger(NotesSynchronizer::class.java)
 
+    override val notes: Flow<List<Note>> = flow {
+        val localNotes = localNotebook.notes.first()
+        if (localNotes.isEmpty()) {
+            logger.info("Local notes empty, fetching from server...")
+            synchronize()
+        }
+        emitAll(localNotebook.notes)
+    }
+
     override suspend fun synchronize() {
         logger.info("Starting synchronization process")
 
@@ -26,22 +39,13 @@ class NotesSynchronizer @Inject constructor(
                 is ResultWrapper.Success -> {
                     logger.info("Successfully fetched ${remoteResult.payload.size} remote notes")
                     val remoteNotes = remoteResult.payload
-                    val localNotes = localNotebook.notes.first()
-                    logger.debug("Loaded ${localNotes.size} local notes")
 
-                    resolveConflicts(localNotes, remoteNotes)
+                    localNotebook.updateNotes(remoteNotes)
 
-                    try {
-                        localNotebook.saveToFile()
-                        logger.info("Local changes saved successfully")
-                    } catch (e: Exception) {
-                        logger.error("Failed to save local changes", e)
-                        throw e
-                    }
+                    logger.info("Local notes updated with server data")
                 }
                 is ResultWrapper.Error -> {
                     logger.warn("Failed to fetch remote notes: ${remoteResult.exception.message}")
-                    logger.info("Attempting to push local changes to server...")
                     pushLocalChangesToServer()
                 }
             }
@@ -53,13 +57,33 @@ class NotesSynchronizer @Inject constructor(
         }
     }
 
+    override suspend fun getNoteByUid(uid: String): Flow<Note?> {
+        val localNoteFlow = localNotebook.getNoteByUid(uid)
+        val localNote = localNoteFlow.first()
+
+        return if (localNote != null) {
+            localNoteFlow
+        } else {
+            when (val remoteResult = remoteRepository.fetchNoteByUid(uid)) {
+                is ResultWrapper.Success -> {
+                    val remoteNote = remoteResult.payload
+                    localNotebook.addNote(remoteNote)
+                    localNotebook.getNoteByUid(uid)
+                }
+                is ResultWrapper.Error -> {
+                    logger.warn("Note with UID=$uid not found on server: ${remoteResult.exception.message}")
+                    kotlinx.coroutines.flow.flowOf(null)
+                }
+            }
+        }
+    }
+
     override suspend fun resolveConflicts(localNotes: List<Note>, remoteNotes: List<Note>) {
         logger.debug("Resolving conflicts between local and remote notes")
 
         val localNotesMap = localNotes.associateBy { it.uid }
         val remoteNotesMap = remoteNotes.associateBy { it.uid }
 
-        // Track changes for logging
         var deletedCount = 0
         var addedCount = 0
         var updatedCount = 0
@@ -111,20 +135,20 @@ class NotesSynchronizer @Inject constructor(
 
     override suspend fun syncOnCreate(note: Note) {
         logger.info("Syncing new note creation (UID: ${note.uid})")
-        localNotebook.addNote(note)
         remoteRepository.createNote(note).handleResult("create")
+        localNotebook.addNote(note)
     }
 
     override suspend fun syncOnUpdate(note: Note) {
         logger.info("Syncing note update (UID: ${note.uid})")
-        localNotebook.updateNote(note)
         remoteRepository.updateNote(note).handleResult("update")
+        localNotebook.updateNote(note)
     }
 
     override suspend fun syncOnDelete(uid: String) {
         logger.info("Syncing note deletion (UID: $uid)")
-        localNotebook.deleteNote(uid)
         remoteRepository.removeNoteByUid(uid).handleResult("delete")
+        localNotebook.deleteNote(uid)
     }
 
     private suspend fun <T> ResultWrapper<T>.handleResult(operation: String) {

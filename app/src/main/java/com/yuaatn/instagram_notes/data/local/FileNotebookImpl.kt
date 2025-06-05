@@ -5,6 +5,7 @@ import com.yuaatn.instagram_notes.model.Note
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import org.json.JSONArray
@@ -58,5 +59,10 @@ internal class FileNotebookImpl @Inject constructor(
             }
         }
         _notes.value = loadedNotes
+    }
+
+    override suspend fun updateNotes(remoteNotes: List<Note>) {
+        _notes.value = remoteNotes
+        saveToFile()
     }
 }

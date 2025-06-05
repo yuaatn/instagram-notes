@@ -42,4 +42,9 @@ internal class FileNotebookProxy @Inject constructor(
         fileNotebookImpl.loadFromFile()
         logger.debug("Загружено ${fileNotebookImpl.notes.count()} заметок из файла")
     }
+
+    override suspend fun updateNotes(remoteNotes: List<Note>) {
+        fileNotebookImpl.loadFromFile()
+        logger.debug("Обновляем локальное хранилище. Загрузка заметок из удаленного репозитория в локальный")
+    }
 }

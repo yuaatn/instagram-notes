@@ -3,6 +3,7 @@ package com.yuaatn.instagram_notes.ui.screens.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
 import com.yuaatn.instagram_notes.ui.screens.add.NoteEntity
 import com.yuaatn.instagram_notes.ui.screens.add.toNote
 import com.yuaatn.instagram_notes.ui.screens.add.toUiState
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NoteEditViewModel @Inject constructor(
-    private val jsonRepository: FileNotebook
+    private val repository: NotesSynchronizer
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NoteEditState())
@@ -36,7 +37,7 @@ class NoteEditViewModel @Inject constructor(
     private fun fetchNoteById(id: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(loading = true)
-            jsonRepository.getNoteByUid(id)
+            repository.getNoteByUid(id)
                 .filterNotNull()
                 .map { note ->
                     _uiState.value.copy(
@@ -66,15 +67,14 @@ class NoteEditViewModel @Inject constructor(
     private fun saveNoteChanges() {
         viewModelScope.launch {
             if (validateNoteInput()) {
-                jsonRepository.updateNote(_uiState.value.currentNote.toNote())
-                jsonRepository.saveToFile()
+                repository.syncOnUpdate(_uiState.value.currentNote.toNote())
             }
         }
     }
 
     private fun removeNote() {
         viewModelScope.launch {
-            jsonRepository.deleteNote(_uiState.value.currentNote.toNote().uid)
+            repository.syncOnDelete(_uiState.value.currentNote.toNote().uid)
             _uiState.value = _uiState.value.copy(noteDeleted = true)
         }
     }
