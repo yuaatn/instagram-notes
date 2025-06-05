@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.count
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
-class FileNotebookProxy @Inject constructor(
+internal class FileNotebookProxy @Inject constructor(
     private val fileNotebookImpl: FileNotebook
 ) : FileNotebook {
     private val logger = LoggerFactory.getLogger(FileNotebookProxy::class.java)

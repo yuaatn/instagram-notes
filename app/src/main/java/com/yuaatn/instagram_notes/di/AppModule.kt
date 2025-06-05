@@ -8,6 +8,10 @@ import com.yuaatn.instagram_notes.data.local.FileNotebookProxy
 import com.yuaatn.instagram_notes.data.remote.NotesApi
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepositoryImpl
+import com.yuaatn.instagram_notes.data.sync.ConflictResolver
+import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
+import com.yuaatn.instagram_notes.data.sync.SyncManager
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -73,12 +77,37 @@ object NetworkModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-object LocalModule {
+abstract class SyncModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindSyncManager(impl: NotesSynchronizer): SyncManager
+
+    @Binds
+    @Singleton
+    abstract fun bindConflictResolver(impl: NotesSynchronizer): ConflictResolver
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RepositoriesModule {
 
     @Provides
     @Singleton
     fun provideFileNotebook(@ApplicationContext context: Context): FileNotebook {
         val originalRepository = FileNotebookImpl(context)
         return FileNotebookProxy(originalRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotesSynchronizer(
+        local: FileNotebook,
+        remote: RemoteRepository
+    ): NotesSynchronizer {
+        return NotesSynchronizer(
+            localNotebook = local,
+            remoteRepository = remote
+        )
     }
 }

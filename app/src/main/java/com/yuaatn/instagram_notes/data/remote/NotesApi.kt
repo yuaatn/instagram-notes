@@ -2,7 +2,6 @@ package com.yuaatn.instagram_notes.data.remote
 
 import com.yuaatn.instagram_notes.data.remote.model.FetchNoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.FetchNotesResponse
-import com.yuaatn.instagram_notes.data.remote.model.ElementNoteRequest
 import com.yuaatn.instagram_notes.data.remote.model.NoteDto
 import com.yuaatn.instagram_notes.data.remote.model.NoteResponse
 import com.yuaatn.instagram_notes.data.remote.model.PatchNotesRequest

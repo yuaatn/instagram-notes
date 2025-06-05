@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.update
 import org.json.JSONArray
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class FileNotebookImpl @Inject constructor(
+internal class FileNotebookImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : FileNotebook {
 

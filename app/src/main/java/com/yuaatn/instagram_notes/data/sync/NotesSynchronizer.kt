@@ -1,0 +1,142 @@
+package com.yuaatn.instagram_notes.data.sync
+
+import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.remote.RemoteRepository
+import com.yuaatn.instagram_notes.data.remote.util.ResultWrapper
+import com.yuaatn.instagram_notes.model.Note
+import kotlinx.coroutines.flow.first
+import org.slf4j.LoggerFactory
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class NotesSynchronizer @Inject constructor(
+    private val localNotebook: FileNotebook,
+    private val remoteRepository: RemoteRepository
+) : SyncManager, ConflictResolver {
+
+    private val logger = LoggerFactory.getLogger(NotesSynchronizer::class.java)
+
+    override suspend fun synchronize() {
+        logger.info("Starting synchronization process")
+
+        try {
+            logger.debug("Fetching remote notes...")
+            when (val remoteResult = remoteRepository.fetchNotes()) {
+                is ResultWrapper.Success -> {
+                    logger.info("Successfully fetched ${remoteResult.payload.size} remote notes")
+                    val remoteNotes = remoteResult.payload
+                    val localNotes = localNotebook.notes.first()
+                    logger.debug("Loaded ${localNotes.size} local notes")
+
+                    resolveConflicts(localNotes, remoteNotes)
+
+                    try {
+                        localNotebook.saveToFile()
+                        logger.info("Local changes saved successfully")
+                    } catch (e: Exception) {
+                        logger.error("Failed to save local changes", e)
+                        throw e
+                    }
+                }
+                is ResultWrapper.Error -> {
+                    logger.warn("Failed to fetch remote notes: ${remoteResult.exception.message}")
+                    logger.info("Attempting to push local changes to server...")
+                    pushLocalChangesToServer()
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Synchronization failed with error: ${e.message}", e)
+            throw e
+        } finally {
+            logger.info("Synchronization process completed")
+        }
+    }
+
+    override suspend fun resolveConflicts(localNotes: List<Note>, remoteNotes: List<Note>) {
+        logger.debug("Resolving conflicts between local and remote notes")
+
+        val localNotesMap = localNotes.associateBy { it.uid }
+        val remoteNotesMap = remoteNotes.associateBy { it.uid }
+
+        // Track changes for logging
+        var deletedCount = 0
+        var addedCount = 0
+        var updatedCount = 0
+
+        localNotes.forEach { localNote ->
+            if (!remoteNotesMap.containsKey(localNote.uid)) {
+                logger.debug("Deleting local note (UID: ${localNote.uid}) as it doesn't exist on server")
+                localNotebook.deleteNote(localNote.uid)
+                deletedCount++
+            }
+        }
+
+        remoteNotes.forEach { remoteNote ->
+            val localNote = localNotesMap[remoteNote.uid]
+
+            if (localNote == null) {
+                logger.debug("Adding new note from server (UID: ${remoteNote.uid})")
+                localNotebook.addNote(remoteNote)
+                addedCount++
+            } else {
+                if (localNote != remoteNote) {
+                    logger.debug("Updating local note (UID: ${remoteNote.uid}) with server version")
+                    localNotebook.updateNote(remoteNote)
+                    updatedCount++
+                }
+            }
+        }
+
+        logger.info("Conflict resolution completed: $deletedCount deleted, $addedCount added, $updatedCount updated")
+    }
+
+    private suspend fun pushLocalChangesToServer() {
+        val localNotes = localNotebook.notes.first()
+        logger.info("Pushing ${localNotes.size} local notes to server")
+
+        localNotes.forEachIndexed { index, note ->
+            logger.debug("Processing note ${index + 1}/${localNotes.size} (UID: ${note.uid})")
+            when (val result = remoteRepository.updateNote(note)) {
+                is ResultWrapper.Success -> {
+                    val uidResponse = result.payload
+                    logger.debug("Successfully updated note on server (UID: ${uidResponse.uid})")
+                }
+                is ResultWrapper.Error -> {
+                    logger.error("Failed to update note on server (UID: ${note.uid}): ${result.exception.message}")
+                }
+            }
+        }
+    }
+
+    override suspend fun syncOnCreate(note: Note) {
+        logger.info("Syncing new note creation (UID: ${note.uid})")
+        localNotebook.addNote(note)
+        remoteRepository.createNote(note).handleResult("create")
+    }
+
+    override suspend fun syncOnUpdate(note: Note) {
+        logger.info("Syncing note update (UID: ${note.uid})")
+        localNotebook.updateNote(note)
+        remoteRepository.updateNote(note).handleResult("update")
+    }
+
+    override suspend fun syncOnDelete(uid: String) {
+        logger.info("Syncing note deletion (UID: $uid)")
+        localNotebook.deleteNote(uid)
+        remoteRepository.removeNoteByUid(uid).handleResult("delete")
+    }
+
+    private suspend fun <T> ResultWrapper<T>.handleResult(operation: String) {
+        when (this) {
+            is ResultWrapper.Success -> {
+                logger.debug("$operation operation succeeded")
+            }
+            is ResultWrapper.Error -> {
+                logger.warn("$operation operation failed with message: ${exception.message}")
+                logger.info("Triggering full synchronization due to failure")
+                synchronize()
+            }
+        }
+    }
+}

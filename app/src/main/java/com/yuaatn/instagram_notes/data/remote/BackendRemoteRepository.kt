@@ -16,7 +16,7 @@ private const val MAX_RETRIES = 3
 private const val INITIAL_RETRY_DELAY_MS = 1000L
 private const val MAX_RETRY_DELAY_MS = 10000L
 
-class RemoteRepositoryImpl @Inject constructor(
+internal class RemoteRepositoryImpl @Inject constructor(
     private val api: NotesApi
 ) : RemoteRepository {
 
