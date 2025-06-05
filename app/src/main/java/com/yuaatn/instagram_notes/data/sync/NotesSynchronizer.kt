@@ -1,6 +1,6 @@
 package com.yuaatn.instagram_notes.data.sync
 
-import com.yuaatn.instagram_notes.data.local.file.FileNotebook
+import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.util.ResultWrapper
 import com.yuaatn.instagram_notes.model.Note
@@ -14,19 +14,19 @@ import javax.inject.Singleton
 
 @Singleton
 class NotesSynchronizer @Inject constructor(
-    private val localNotebook: FileNotebook,
+    private val localRepository: LocalRepository,
     private val remoteRepository: RemoteRepository
 ) : SyncManager, ConflictResolver {
 
     private val logger = LoggerFactory.getLogger(NotesSynchronizer::class.java)
 
     override val notes: Flow<List<Note>> = flow {
-        val localNotes = localNotebook.notes.first()
+        val localNotes = localRepository.notes.first()
         if (localNotes.isEmpty()) {
             logger.info("Local notes empty, fetching from server...")
             synchronize()
         }
-        emitAll(localNotebook.notes)
+        emitAll(localRepository.notes)
     }
 
     override suspend fun synchronize() {
@@ -39,7 +39,7 @@ class NotesSynchronizer @Inject constructor(
                     logger.info("Successfully fetched ${remoteResult.payload.size} remote notes")
                     val remoteNotes = remoteResult.payload
 
-                    localNotebook.updateNotes(remoteNotes)
+                    localRepository.updateNotes(remoteNotes)
 
                     logger.info("Local notes updated with server data")
                 }
@@ -57,7 +57,7 @@ class NotesSynchronizer @Inject constructor(
     }
 
     override suspend fun getNoteByUid(uid: String): Flow<Note?> {
-        val localNoteFlow = localNotebook.getNoteByUid(uid)
+        val localNoteFlow = localRepository.getNoteByUid(uid)
         val localNote = localNoteFlow.first()
 
         return if (localNote != null) {
@@ -66,8 +66,8 @@ class NotesSynchronizer @Inject constructor(
             when (val remoteResult = remoteRepository.fetchNoteByUid(uid)) {
                 is ResultWrapper.Success -> {
                     val remoteNote = remoteResult.payload
-                    localNotebook.addNote(remoteNote)
-                    localNotebook.getNoteByUid(uid)
+                    localRepository.addNote(remoteNote)
+                    localRepository.getNoteByUid(uid)
                 }
                 is ResultWrapper.Error -> {
                     logger.warn("Note with UID=$uid not found on server: ${remoteResult.exception.message}")
@@ -90,7 +90,7 @@ class NotesSynchronizer @Inject constructor(
         localNotes.forEach { localNote ->
             if (!remoteNotesMap.containsKey(localNote.uid)) {
                 logger.debug("Deleting local note (UID: ${localNote.uid}) as it doesn't exist on server")
-                localNotebook.deleteNote(localNote.uid)
+                localRepository.deleteNote(localNote.uid)
                 deletedCount++
             }
         }
@@ -100,12 +100,12 @@ class NotesSynchronizer @Inject constructor(
 
             if (localNote == null) {
                 logger.debug("Adding new note from server (UID: ${remoteNote.uid})")
-                localNotebook.addNote(remoteNote)
+                localRepository.addNote(remoteNote)
                 addedCount++
             } else {
                 if (localNote != remoteNote) {
                     logger.debug("Updating local note (UID: ${remoteNote.uid}) with server version")
-                    localNotebook.updateNote(remoteNote)
+                    localRepository.updateNote(remoteNote)
                     updatedCount++
                 }
             }
@@ -115,7 +115,7 @@ class NotesSynchronizer @Inject constructor(
     }
 
     private suspend fun pushLocalChangesToServer() {
-        val localNotes = localNotebook.notes.first()
+        val localNotes = localRepository.notes.first()
         logger.info("Pushing ${localNotes.size} local notes to server")
 
         localNotes.forEachIndexed { index, note ->
@@ -135,19 +135,19 @@ class NotesSynchronizer @Inject constructor(
     override suspend fun syncOnCreate(note: Note) {
         logger.info("Syncing new note creation (UID: ${note.uid})")
         remoteRepository.createNote(note).handleResult("create")
-        localNotebook.addNote(note)
+        localRepository.addNote(note)
     }
 
     override suspend fun syncOnUpdate(note: Note) {
         logger.info("Syncing note update (UID: ${note.uid})")
         remoteRepository.updateNote(note).handleResult("update")
-        localNotebook.updateNote(note)
+        localRepository.updateNote(note)
     }
 
     override suspend fun syncOnDelete(uid: String) {
         logger.info("Syncing note deletion (UID: $uid)")
         remoteRepository.removeNoteByUid(uid).handleResult("delete")
-        localNotebook.deleteNote(uid)
+        localRepository.deleteNote(uid)
     }
 
     private suspend fun <T> ResultWrapper<T>.handleResult(operation: String) {

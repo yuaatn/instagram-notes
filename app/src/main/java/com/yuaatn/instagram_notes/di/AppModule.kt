@@ -2,7 +2,7 @@ package com.yuaatn.instagram_notes.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.yuaatn.instagram_notes.data.local.file.FileNotebook
+import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.data.local.file.FileNotebookImpl
 import com.yuaatn.instagram_notes.data.local.file.FileNotebookProxy
 import com.yuaatn.instagram_notes.data.remote.NotesApi
@@ -78,7 +78,7 @@ object RepositoriesModule {
 
     @Provides
     @Singleton
-    fun provideFileNotebook(@ApplicationContext context: Context): FileNotebook {
+    fun provideFileNotebook(@ApplicationContext context: Context): LocalRepository {
         val originalRepository = FileNotebookImpl(context)
         return FileNotebookProxy(originalRepository)
     }
@@ -86,11 +86,11 @@ object RepositoriesModule {
     @Provides
     @Singleton
     fun provideNotesSynchronizer(
-        local: FileNotebook,
+        local: LocalRepository,
         remote: RemoteRepository
     ): NotesSynchronizer {
         return NotesSynchronizer(
-            localNotebook = local,
+            localRepository = local,
             remoteRepository = remote
         )
     }

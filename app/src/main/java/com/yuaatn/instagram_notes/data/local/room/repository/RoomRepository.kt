@@ -1,12 +1,12 @@
 package com.yuaatn.instagram_notes.data.local.room.repository
 
+import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.data.local.room.dao.NoteDao
 import com.yuaatn.instagram_notes.data.local.room.mappers.toDomain
 import com.yuaatn.instagram_notes.data.local.room.mappers.toEntity
-import com.yuaatn.instagram_notes.data.local.room.LocalRepository
 import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
 class RoomRepository(
@@ -46,11 +46,26 @@ class RoomRepository(
         }
     }
 
-    override suspend fun getNoteByUid(uid: String): Note? {
-        return dao.getByUid(uid).firstOrNull()?.toDomain()
+    override suspend fun getNoteByUid(uid: String): Flow<Note> {
+        return dao.getByUid(uid)
+            .filterNotNull()
+            .map { it.toDomain() }
     }
 
     override suspend fun deleteNote(uid: String) {
         dao.deleteByUid(uid)
+    }
+
+
+    override suspend fun saveToFile() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun loadFromFile() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateNotes(remoteNotes: List<Note>) {
+        TODO("Not yet implemented")
     }
 }

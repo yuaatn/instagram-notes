@@ -1,6 +1,7 @@
 package com.yuaatn.instagram_notes.data.local.file
 
 import android.content.Context
+import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.model.Note
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -13,29 +14,29 @@ import javax.inject.Inject
 
 internal class FileNotebookImpl @Inject constructor(
     @ApplicationContext context: Context
-) : FileNotebook {
+) : LocalRepository {
 
     private val file = File(context.filesDir, "notes.json")
     private val _notes = MutableStateFlow<List<Note>>(emptyList())
     override val notes: Flow<List<Note>> get() = _notes
 
-    override fun addNote(note: Note) {
+    override suspend fun addNote(note: Note) {
         _notes.value += note
     }
 
-    override fun getNoteByUid(uid: String): Flow<Note> =
+    override suspend fun getNoteByUid(uid: String): Flow<Note> =
         flow {
             val habit = checkNotNull(_notes.value.find { it.uid == uid })
             emit(habit)
         }
 
-    override fun updateNote(note: Note) {
+    override suspend fun updateNote(note: Note) {
         _notes.update { currentNotes ->
             currentNotes.map { if (it.uid == note.uid) note else it }
         }
     }
 
-    override fun deleteNote(uid: String) {
+    override suspend fun deleteNote(uid: String) {
         _notes.value = _notes.value.filterNot { it.uid == uid }
     }
 

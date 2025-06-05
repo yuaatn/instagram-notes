@@ -1,5 +1,6 @@
 package com.yuaatn.instagram_notes.data.local.file
 
+import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.count
@@ -7,44 +8,44 @@ import org.slf4j.LoggerFactory
 import javax.inject.Inject
 
 internal class FileNotebookProxy @Inject constructor(
-    private val fileNotebookImpl: FileNotebook
-) : FileNotebook {
+    private val localRepositoryImpl: LocalRepository
+) : LocalRepository {
     private val logger = LoggerFactory.getLogger(FileNotebookProxy::class.java)
 
-    override val notes: Flow<List<Note>> get() = fileNotebookImpl.notes
+    override val notes: Flow<List<Note>> get() = localRepositoryImpl.notes
 
-    override fun addNote(note: Note) {
-        fileNotebookImpl.addNote(note)
+    override suspend fun addNote(note: Note) {
+        localRepositoryImpl.addNote(note)
         logger.debug("Добавлена заметка: ${note.title}")
     }
 
-    override fun getNoteByUid(uid: String): Flow<Note> {
+    override suspend fun getNoteByUid(uid: String): Flow<Note> {
         logger.debug("Получение заметки по UID: $uid")
-        return fileNotebookImpl.getNoteByUid(uid)
+        return localRepositoryImpl.getNoteByUid(uid)
     }
 
-    override fun updateNote(note: Note) {
-        fileNotebookImpl.updateNote(note)
+    override suspend fun updateNote(note: Note) {
+        localRepositoryImpl.updateNote(note)
         logger.debug("Обновлена заметка: ${note.title} (UID: ${note.uid})")
     }
 
-    override fun deleteNote(uid: String) {
-        fileNotebookImpl.deleteNote(uid)
+    override suspend fun deleteNote(uid: String) {
+        localRepositoryImpl.deleteNote(uid)
         logger.debug("Удаление заметки UID=$uid")
     }
 
     override suspend fun saveToFile() {
-        fileNotebookImpl.saveToFile()
-        logger.debug("Сохранено ${fileNotebookImpl.notes.count()} заметок в файл")
+        localRepositoryImpl.saveToFile()
+        logger.debug("Сохранено ${localRepositoryImpl.notes.count()} заметок в файл")
     }
 
     override suspend fun loadFromFile() {
-        fileNotebookImpl.loadFromFile()
-        logger.debug("Загружено ${fileNotebookImpl.notes.count()} заметок из файла")
+        localRepositoryImpl.loadFromFile()
+        logger.debug("Загружено ${localRepositoryImpl.notes.count()} заметок из файла")
     }
 
     override suspend fun updateNotes(remoteNotes: List<Note>) {
-        fileNotebookImpl.loadFromFile()
+        localRepositoryImpl.loadFromFile()
         logger.debug("Обновляем локальное хранилище. Загрузка заметок из удаленного репозитория в локальный")
     }
 }
