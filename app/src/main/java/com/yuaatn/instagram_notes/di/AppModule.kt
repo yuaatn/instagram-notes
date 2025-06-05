@@ -2,16 +2,13 @@ package com.yuaatn.instagram_notes.di
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.yuaatn.instagram_notes.data.local.FileNotebook
-import com.yuaatn.instagram_notes.data.local.FileNotebookImpl
-import com.yuaatn.instagram_notes.data.local.FileNotebookProxy
+import com.yuaatn.instagram_notes.data.local.file.FileNotebook
+import com.yuaatn.instagram_notes.data.local.file.FileNotebookImpl
+import com.yuaatn.instagram_notes.data.local.file.FileNotebookProxy
 import com.yuaatn.instagram_notes.data.remote.NotesApi
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepositoryImpl
-import com.yuaatn.instagram_notes.data.sync.ConflictResolver
 import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
-import com.yuaatn.instagram_notes.data.sync.SyncManager
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

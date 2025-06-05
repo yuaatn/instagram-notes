@@ -1,6 +1,6 @@
 package com.yuaatn.instagram_notes.data.sync
 
-import com.yuaatn.instagram_notes.data.local.FileNotebook
+import com.yuaatn.instagram_notes.data.local.file.FileNotebook
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.util.ResultWrapper
 import com.yuaatn.instagram_notes.model.Note
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onStart
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -1,4 +1,4 @@
-package com.yuaatn.instagram_notes.data.local
+package com.yuaatn.instagram_notes.data.local.file
 
 import android.content.Context
 import com.yuaatn.instagram_notes.model.Note

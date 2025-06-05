@@ -1,6 +1,7 @@
 package com.yuaatn.instagram_notes.model
 
 import org.json.JSONObject
+import java.util.Date
 import java.util.UUID
 import android.graphics.Color as AndroidColor
 
@@ -11,7 +12,7 @@ data class Note(
     val color: Int = AndroidColor.WHITE,
     val importance: Importance = Importance.NORMAL,
     val deadline: Long? = null,
-    val createdAt: Long? = null,
+    val createdAt: Long? = Date().time,
     val changedAt: Long? = null,
     val deviceId: String = "myDeviceId_123"
 ) {

@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
+    id("com.google.devtools.ksp") version "2.1.10-1.0.31"
+
     kotlin("plugin.serialization") version "2.1.10"
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
@@ -44,6 +46,11 @@ android {
 }
 
 dependencies {
+
+    // Room - локальная база данных
+    implementation(libs.androidx.room.runtime)
+    ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
+    implementation(libs.androidx.room.ktx)
 
     // retrofit2 для работы с бекендом
     implementation(libs.kotlinx.serialization.json)

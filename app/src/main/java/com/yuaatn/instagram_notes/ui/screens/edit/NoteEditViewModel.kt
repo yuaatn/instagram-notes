@@ -2,7 +2,6 @@ package com.yuaatn.instagram_notes.ui.screens.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
 import com.yuaatn.instagram_notes.ui.screens.add.NoteEntity
 import com.yuaatn.instagram_notes.ui.screens.add.toNote

@@ -2,7 +2,6 @@ package com.yuaatn.instagram_notes.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.yuaatn.instagram_notes.data.local.FileNotebook
 import com.yuaatn.instagram_notes.data.sync.NotesSynchronizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
