@@ -5,6 +5,8 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.data.local.file.FileNotebookImpl
 import com.yuaatn.instagram_notes.data.local.file.FileNotebookProxy
+import com.yuaatn.instagram_notes.data.local.room.LocalNotesDatabase
+import com.yuaatn.instagram_notes.data.local.room.repository.RoomRepository
 import com.yuaatn.instagram_notes.data.remote.NotesApi
 import com.yuaatn.instagram_notes.data.remote.RemoteRepository
 import com.yuaatn.instagram_notes.data.remote.RemoteRepositoryImpl
@@ -76,11 +78,26 @@ object NetworkModule {
 @InstallIn(SingletonComponent::class)
 object RepositoriesModule {
 
+//    @Provides
+//    @Singleton
+//    fun provideFileNotebook(@ApplicationContext context: Context): LocalRepository {
+//        val originalRepository = FileNotebookImpl(context)
+//        return FileNotebookProxy(originalRepository)
+//    }
+
     @Provides
     @Singleton
-    fun provideFileNotebook(@ApplicationContext context: Context): LocalRepository {
-        val originalRepository = FileNotebookImpl(context)
-        return FileNotebookProxy(originalRepository)
+    fun provideDatabase(@ApplicationContext context: Context): LocalNotesDatabase {
+        return LocalNotesDatabase.getDatabase(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRoom(
+        database: LocalNotesDatabase
+    ): LocalRepository {
+        val noteDao = database.noteDao()
+        return RoomRepository(noteDao)
     }
 
     @Provides

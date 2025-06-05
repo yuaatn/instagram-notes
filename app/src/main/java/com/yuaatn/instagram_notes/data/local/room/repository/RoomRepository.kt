@@ -1,5 +1,6 @@
 package com.yuaatn.instagram_notes.data.local.room.repository
 
+import android.util.Log
 import com.yuaatn.instagram_notes.data.local.LocalRepository
 import com.yuaatn.instagram_notes.data.local.room.dao.NoteDao
 import com.yuaatn.instagram_notes.data.local.room.mappers.toDomain
@@ -7,6 +8,7 @@ import com.yuaatn.instagram_notes.data.local.room.mappers.toEntity
 import com.yuaatn.instagram_notes.model.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class RoomRepository(
@@ -56,16 +58,24 @@ class RoomRepository(
         dao.deleteByUid(uid)
     }
 
+    override suspend fun updateNotes(remoteNotes: List<Note>) {
+        val localNotes = dao.getAll().first()
+        localNotes.forEach { dao.delete(it) }
+
+        remoteNotes.forEach { note ->
+            dao.insert(note.toEntity())
+        }
+    }
+
+
 
     override suspend fun saveToFile() {
-        TODO("Not yet implemented")
+        Log.d("FileNotebook", "Saving notes to file...")
+        // TODO: no need implement file saving logic
     }
 
     override suspend fun loadFromFile() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun updateNotes(remoteNotes: List<Note>) {
-        TODO("Not yet implemented")
+        Log.d("FileNotebook", "Loading notes from file...")
+        // TODO: no need implement file loading logic
     }
 }
