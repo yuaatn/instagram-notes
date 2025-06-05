@@ -140,6 +140,7 @@ internal class RemoteRepositoryImpl @Inject constructor(
         return ResultWrapper.Error(lastError ?: Exception("Unknown error"))
     }
 
+    @Suppress("UNCHECKED_CAST")
     private suspend fun <T> executeModificationWithRetry(
         block: suspend () -> ResultWrapper<T>,
     ): ResultWrapper<T> {

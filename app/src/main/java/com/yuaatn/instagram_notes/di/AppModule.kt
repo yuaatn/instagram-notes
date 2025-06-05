@@ -77,19 +77,6 @@ object NetworkModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SyncModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindSyncManager(impl: NotesSynchronizer): SyncManager
-
-    @Binds
-    @Singleton
-    abstract fun bindConflictResolver(impl: NotesSynchronizer): ConflictResolver
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
 object RepositoriesModule {
 
     @Provides
