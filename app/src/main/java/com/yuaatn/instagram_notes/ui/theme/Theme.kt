@@ -9,6 +9,8 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -31,6 +33,14 @@ private val LightColorScheme = lightColorScheme(
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
     */
+)
+
+val InstagramGradient = Brush.horizontalGradient(
+    colors = listOf(Color(0xFF833AB4), Color(0xFFC13584), Color(0xFFE1306C), Color(0xFFFD1D1D), Color(0xFFF56040), Color(0xFFF77737), Color(0xFFFCAF45))
+)
+
+val PurpleGradient = Brush.horizontalGradient(
+    colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC))
 )
 
 @Composable
